@@ -1,0 +1,25 @@
+---
+- name: Create .ini files for SecureCRT from CSV
+  hosts: localhost
+  gather_facts: False
+  connection: local
+
+  tasks:
+    - name: "Reading devices from CSV"
+      read_csv:
+        path: var.csv
+      register: dev
+
+    - name: Create Directory for configurations
+      file:
+        path: ./scrt_files
+        state: directory
+
+    - name: generate ini
+      template: 
+        src=template.j2
+        dest=./scrt_files/{{ device.Filename }}.ini
+      loop: '{{ dev.list }}'
+      loop_control:
+        loop_var: device
+...
